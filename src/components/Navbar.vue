@@ -1,29 +1,34 @@
 <template>
-  <nav>
+  <nav v-if="user">
     <div>
-      <p>Hi username</p>
-      <p class="email">logged in as email</p>
+      <p>Hi {{ user.displayName }}</p>
+      <p class="email">logged in as {{ user.email }}</p>
     </div>
-    <button @click="logout">Logout</button>
+    <button @click="Logout">Logout</button>
   </nav>
 </template>
 
 <script>
-import { ref } from '@vue/reactivity';
-import { auth } from '../firebase/config';
+import getUser from '../composables/getUser';
+import useLogout from '../composables/useLogout';
+import { useRouter } from 'vue-router';
 export default {
   setup() {
-    let error = ref(null);
-    let logout = async () => {
-      try {
-        await auth.signOut();
-        console.log('User logout');
-      } catch (err) {
-        error.value = err.message;
-        console.log(err.value);
+    let router = useRouter();
+    //SignOut Method
+    let { logout, error } = useLogout();
+
+    let Logout = async () => {
+      let res = await logout();
+      if (res) {
+        router.push({ name: 'Welcome' });
       }
     };
-    return { logout };
+
+    //getUserInformation
+    let { user } = getUser();
+
+    return { Logout, user, error };
   },
 };
 </script>
