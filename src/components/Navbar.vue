@@ -19,10 +19,7 @@ export default {
     let { logout, error } = useLogout();
 
     let Logout = async () => {
-      let res = await logout();
-      if (res) {
-        router.push({ name: 'Welcome' });
-      }
+      await logout();
     };
 
     //getUserInformation
